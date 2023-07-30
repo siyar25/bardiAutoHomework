@@ -22,8 +22,12 @@
         <div class="timer">{{ formatTime(timer) }}</div>
       </div>
     </div>
+    <button id="reset-db" @click="resetSeats()">Ülőhelyek visszaállítása</button>
   </div>
-  <div v-else id="loading">Loading...</div>
+  <!-- <div v-else id="loading">Loading...</div> -->
+  <div v-else>
+    <button class="init-db" @click="initDatabase()">Adatbázis inicializálása</button>
+  </div>
 </template>
 
 <script setup>
@@ -34,6 +38,10 @@ import {
   sendPayment,
   releaseReservation,
 } from "../server/services/seatsService"
+import {
+  setupDatabase,
+  resetDatabase
+} from "../server/services/dbService"
 
 const { data: seats } = await fetchSeats();
 const reservedSeats = ref([]);
@@ -64,19 +72,26 @@ const toggleReservation = (seat) => {
   }
 };
 
-const handleReservation = () => {
-  reserveSeats(reservedSeats)
-  localStorage.setItem("seats", JSON.stringify(reservedSeats.value));
-  hasReservation.value = true
-  startTimer()
+const handleReservation = async () => {
+  const { data: checkedSeats } = await reserveSeats(reservedSeats);
+
+  if (checkedSeats.value.isReserved) {
+    alert(`Sorry, the following seats are already reserved: ${checkedSeats.value.reservedSeats} \n Please try again.`)
+    reservedSeats.value = [];
+    return window.location.reload();
+  } else {
+    localStorage.setItem("seats", JSON.stringify(reservedSeats.value));
+    hasReservation.value = true
+    startTimer()
+  }
 };
 
-const handlePayment = () => {
-  sendPayment(reservedSeats)
+const handlePayment = async () => {
+  await sendPayment(reservedSeats)
   alert(`Sikeres fizetés!\n Lefoglalt ülőhelyek: ${reservedSeats.value}\n ${email.value} számára.`)
   localStorage.setItem("seats", null);
-  hasReservation.value = false
-  reservedSeats.value = []
+  hasReservation.value = false;
+  reservedSeats.value = [];
   window.location.reload();
 }
 
@@ -89,11 +104,25 @@ const startTimer = () => {
       releaseReservation(reservedSeats)
       localStorage.setItem("seats", null);
       hasReservation.value = false
-      alert("Seat(s) released due to time expiration.")
+      alert("A foglalás a határidő túllépése miatt törölve.")
       window.location.reload();
     }
   }, 1000);
 };
+
+const initDatabase = async () => {
+  await setupDatabase();
+}
+
+const resetSeats = async () => {
+  await resetDatabase();
+  clearInterval(timerInterval);
+  releaseReservation(reservedSeats)
+  localStorage.setItem("seats", null);
+  hasReservation.value = false
+  alert("Ülőhelyek visszaállítva.")
+  window.location.reload();
+}
 </script>
 
 <style scoped>
@@ -188,5 +217,26 @@ const startTimer = () => {
   transform: translate(-50%, -50%);
   font-size: xx-large;
   font-weight: bold;
+}
+
+#init-db {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: xx-large;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#reset-db {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 1rem;
+  font-size: x-large;
+  font-weight: bold;
+  cursor: pointer;
+
 }
 </style>

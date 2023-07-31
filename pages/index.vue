@@ -54,9 +54,11 @@ onMounted(() => {
   if (Array.isArray(storedSeats) && storedSeats.length > 0) {
     hasReservation.value = true;
     reservedSeats.value = storedSeats;
+    clearInterval(timerInterval)
     startTimer()
+  } else {
+    clearInterval(timerInterval)
   }
-  clearInterval(timerInterval)
 });
 
 onUnmounted(() => {
@@ -96,12 +98,12 @@ const handlePayment = async () => {
   window.location.reload();
 }
 
-const startTimer = () => {
-  const reservationTime = new Date(reservedSeats.value[0].reservation_time).getTime();
+const startTimer = async () => {
+  const { data: updatedSeats } = await fetchSeats();
+  const reservationTime = new Date(updatedSeats.value.seats[reservedSeats.value[0]-1].reservation_time).getTime();
   const currentTime = new Date().getTime();
   const countdownDurationInSeconds = timer.value;
   const remainingTimeInSeconds = Math.max(0, countdownDurationInSeconds - Math.floor((currentTime - reservationTime) / 1000));
-
   timer.value = remainingTimeInSeconds;
 
   timerInterval = setInterval(() => {

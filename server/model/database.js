@@ -2,10 +2,8 @@ import pool from "../db";
 
 export async function setupDatabase() {
   try {
-    // Drop/Create 'seats table'
     await createSeatsTable();
 
-    // Populate the 'seats' table with initial data
     await populateSeatsTable();
 
     console.log("Database setup complete!");
@@ -25,8 +23,8 @@ async function createSeatsTable() {
             seat_number INT NOT NULL UNIQUE,
             status ENUM('szabad', 'foglalt', 'elkelt') DEFAULT 'szabad',
             is_locked TINYINT DEFAULT 1,
-            reservation_time TIMESTAMP DEFAULT NULL;
-          )
+            reservation_time DATETIME DEFAULT NULL
+          );
         `;
 
     await pool.promise().query(createTableQuery);
@@ -73,12 +71,13 @@ function getSeatValues(startSeatNumber, endSeatNumber, status, isLocked) {
 }
 
 export async function resetDatabase() {
-    try {
-        const resetTableQuery = "UPDATE seats SET status = 'szabad', is_locked = 0, reservation_time = null WHERE id IN (24, 25)";
+  try {
+    const resetTableQuery =
+      "UPDATE seats SET status = 'szabad', is_locked = 0, reservation_time = null WHERE id IN (24, 25)";
 
-        await pool.promise().query(resetTableQuery);
-        console.log("Table reset successful.")
-    } catch (error) {
-        console.error("Error during resetting the table: ", error)
-    }
+    await pool.promise().query(resetTableQuery);
+    console.log("Table reset successful.");
+  } catch (error) {
+    console.error("Error during resetting the table: ", error);
+  }
 }

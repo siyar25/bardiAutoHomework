@@ -24,9 +24,8 @@
     </div>
     <button id="reset-db" @click="resetSeats()">Ülőhelyek visszaállítása</button>
   </div>
-  <!-- <div v-else id="loading">Loading...</div> -->
   <div v-else>
-    <button class="init-db" @click="initDatabase()">Adatbázis inicializálása</button>
+    <button id="init-db" @click="initDatabase()">Adatbázis inicializálása</button>
   </div>
 </template>
 
@@ -55,7 +54,9 @@ onMounted(() => {
   if (Array.isArray(storedSeats) && storedSeats.length > 0) {
     hasReservation.value = true;
     reservedSeats.value = storedSeats;
+    startTimer()
   }
+  clearInterval(timerInterval)
 });
 
 onUnmounted(() => {
@@ -76,7 +77,7 @@ const handleReservation = async () => {
   const { data: checkedSeats } = await reserveSeats(reservedSeats);
 
   if (checkedSeats.value.isReserved) {
-    alert(`Sorry, the following seats are already reserved: ${checkedSeats.value.reservedSeats} \n Please try again.`)
+    alert(`Sajnáljuk, a következő ülőhelyek foglalás alatt állnak: ${checkedSeats.value.reservedSeats} \n Kérem próbálja újra.`)
     reservedSeats.value = [];
     return window.location.reload();
   } else {
@@ -96,6 +97,13 @@ const handlePayment = async () => {
 }
 
 const startTimer = () => {
+  const reservationTime = new Date(reservedSeats.value[0].reservation_time).getTime();
+  const currentTime = new Date().getTime();
+  const countdownDurationInSeconds = timer.value;
+  const remainingTimeInSeconds = Math.max(0, countdownDurationInSeconds - Math.floor((currentTime - reservationTime) / 1000));
+
+  timer.value = remainingTimeInSeconds;
+
   timerInterval = setInterval(() => {
     if (timer.value > 0) {
       timer.value--;
@@ -112,6 +120,7 @@ const startTimer = () => {
 
 const initDatabase = async () => {
   await setupDatabase();
+  window.location.reload();
 }
 
 const resetSeats = async () => {
@@ -207,15 +216,6 @@ const resetSeats = async () => {
 
 .timer {
   font-size: large;
-  font-weight: bold;
-}
-
-#loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: xx-large;
   font-weight: bold;
 }
 

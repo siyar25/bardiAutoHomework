@@ -24,7 +24,8 @@ async function createSeatsTable() {
             id INT PRIMARY KEY AUTO_INCREMENT NOT NULL UNIQUE,
             seat_number INT NOT NULL UNIQUE,
             status ENUM('szabad', 'foglalt', 'elkelt') DEFAULT 'szabad',
-            is_locked TINYINT DEFAULT 1
+            is_locked TINYINT DEFAULT 1,
+            reservation_time TIMESTAMP DEFAULT NULL;
           )
         `;
 
@@ -73,7 +74,7 @@ function getSeatValues(startSeatNumber, endSeatNumber, status, isLocked) {
 
 export async function resetDatabase() {
     try {
-        const resetTableQuery = "UPDATE seats SET status = 'szabad', is_locked = 0 WHERE id IN (24, 25)";
+        const resetTableQuery = "UPDATE seats SET status = 'szabad', is_locked = 0, reservation_time = null WHERE id IN (24, 25)";
 
         await pool.promise().query(resetTableQuery);
         console.log("Table reset successful.")

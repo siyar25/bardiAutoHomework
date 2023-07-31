@@ -15,14 +15,14 @@ export async function reserveSeats(seats) {
     if (seats.length === 0) {
       throw new Error("No seats provided to update.");
     }
-
+    const now = new Date().toISOString();
     const reservedSeats = await checkAvailability(seats);
 
     if (reservedSeats.length > 0) {
       console.log("The following seats are already reserved:", reservedSeats);
       return reservedSeats;
     } else {
-      const query = `UPDATE seats SET status = 'foglalt', is_locked = 1 WHERE id IN (${seats.join(
+      const query = `UPDATE seats SET status = 'foglalt', is_locked = 1, reservation_time = ${now} WHERE id IN (${seats.join(
         ","
       )})`;
 

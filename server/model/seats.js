@@ -66,7 +66,7 @@ export async function releaseReservation(seats) {
     )});`;
 
     await pool.promise().query(query);
-    console.log("Seats released due to time expiration.");
+    return "Seats released due to time expiration.";
   } catch (error) {
     console.error("Error updating seats' status:", error);
   }

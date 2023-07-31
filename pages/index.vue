@@ -16,7 +16,7 @@
       <div>Fizetéshez kérem írja be az email címét:</div>
       <div class="payment">
         <form @submit="handlePayment()">
-          <input type="email" placeholder="johndoe@example.com" @change="(e) => email = e.target.value" />
+          <input type="email" placeholder="johndoe@example.com" @change="(e) => email = e.target.value" required />
           <button type="submit">Fizetés</button>
         </form>
         <div class="timer">{{ formatTime(timer) }}</div>
@@ -45,7 +45,7 @@ import {
 const { data: seats } = await fetchSeats();
 const reservedSeats = ref([]);
 const hasReservation = ref(false);
-const email = ref();
+const email = ref("");
 const timer = ref(120)
 let timerInterval;
 

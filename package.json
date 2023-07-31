@@ -12,5 +12,8 @@
     "@nuxt/devtools": "latest",
     "@types/node": "^18.17.0",
     "nuxt": "^3.6.5"
+  },
+  "dependencies": {
+    "mysql2": "^3.5.2"
   }
 }

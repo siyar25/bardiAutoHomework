@@ -1,0 +1,1 @@
+CREATE DATABASE bardi_auto_cinema;

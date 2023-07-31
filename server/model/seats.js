@@ -1,4 +1,5 @@
 import pool from "../db/index";
+import { formatDatetimeToMySQL } from "../../utils/timeFormatter";
 
 export async function getSeats() {
   try {
@@ -15,20 +16,22 @@ export async function reserveSeats(seats) {
     if (seats.length === 0) {
       throw new Error("No seats provided to update.");
     }
-    const now = new Date().toISOString();
+
+    const currentDateTime = formatDatetimeToMySQL();
+
     const reservedSeats = await checkAvailability(seats);
 
     if (reservedSeats.length > 0) {
       console.log("The following seats are already reserved:", reservedSeats);
       return reservedSeats;
     } else {
-      const query = `UPDATE seats SET status = 'foglalt', is_locked = 1, reservation_time = ${now} WHERE id IN (${seats.join(
+      const query = `UPDATE seats SET status = 'foglalt', is_locked = 1, reservation_time = '${currentDateTime}' WHERE id IN (${seats.join(
         ","
       )})`;
 
       await pool.promise().query(query);
-      console.log("Seats status updated successfully!");
-      return reservedSeats;
+      console.log("Seats' status updated successfully!");
+      return [];
     }
   } catch (error) {
     console.error("Error updating seats' status:", error);
@@ -58,7 +61,7 @@ export async function releaseReservation(seats) {
       throw new Error("No seats provided to update.");
     }
 
-    const query = `UPDATE seats SET status = 'szabad', is_locked = 0 WHERE id IN (${seats.join(
+    const query = `UPDATE seats SET status = 'szabad', is_locked = 0, reservation_time = null WHERE id IN (${seats.join(
       ","
     )});`;
 

@@ -1,4 +1,4 @@
-import { releaseReservation } from "../model/seats";
+import { releaseReservation } from "../../model/seats";
 
 export default defineEventHandler(async (event) => {
   const { seats } = await readBody(event);

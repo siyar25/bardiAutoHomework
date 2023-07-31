@@ -1,4 +1,4 @@
-import { reserveSeats } from "../model/seats";
+import { reserveSeats } from "../../model/seats";
 
 export default defineEventHandler(async (event) => {
   const { seats } = await readBody(event);

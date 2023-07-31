@@ -1,5 +1,5 @@
 import pool from "../db/index";
-import formatDatetimeToMySQL from "../../utils/formatTimeToSql";
+import { formatDatetimeToMySQL } from "../../utils/timeFormatter";
 
 export async function getSeats() {
   try {
@@ -16,7 +16,7 @@ export async function reserveSeats(seats) {
     if (seats.length === 0) {
       throw new Error("No seats provided to update.");
     }
-    
+
     const currentDateTime = formatDatetimeToMySQL();
 
     const reservedSeats = await checkAvailability(seats);
@@ -30,7 +30,7 @@ export async function reserveSeats(seats) {
       )})`;
 
       await pool.promise().query(query);
-      console.log("Seats status updated successfully!");
+      console.log("Seats' status updated successfully!");
       return [];
     }
   } catch (error) {

@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import formatTime from "../utils/timeFormatter"
+import { formatTime } from "../utils/timeFormatter"
 import {
   fetchSeats,
   reserveSeats,
@@ -76,7 +76,7 @@ const toggleReservation = (seat) => {
 };
 
 const handleReservation = async () => {
-  const { data: checkedSeats } = await reserveSeats(reservedSeats);
+  const { data: checkedSeats } = await reserveSeats(reservedSeats.value);
 
   if (checkedSeats.value.isReserved) {
     alert(`Sajnáljuk, a következő ülőhelyek foglalás alatt állnak: ${checkedSeats.value.reservedSeats} \n Kérem próbálja újra.`)
@@ -90,7 +90,7 @@ const handleReservation = async () => {
 };
 
 const handlePayment = async () => {
-  await sendPayment(reservedSeats)
+  await sendPayment(reservedSeats.value)
   alert(`Sikeres fizetés!\n Lefoglalt ülőhelyek: ${reservedSeats.value}\n ${email.value} számára.`)
   localStorage.setItem("seats", null);
   hasReservation.value = false;
@@ -100,7 +100,7 @@ const handlePayment = async () => {
 
 const startTimer = async () => {
   const { data: updatedSeats } = await fetchSeats();
-  const reservationTime = new Date(updatedSeats.value.seats[reservedSeats.value[0]-1].reservation_time).getTime();
+  const reservationTime = new Date(updatedSeats.value.seats[reservedSeats.value[0] - 1].reservation_time).getTime();
   const currentTime = new Date().getTime();
   const countdownDurationInSeconds = timer.value;
   const remainingTimeInSeconds = Math.max(0, countdownDurationInSeconds - Math.floor((currentTime - reservationTime) / 1000));
@@ -111,7 +111,7 @@ const startTimer = async () => {
       timer.value--;
     } else {
       clearInterval(timerInterval);
-      releaseReservation(reservedSeats)
+      releaseReservation(reservedSeats.value)
       localStorage.setItem("seats", null);
       hasReservation.value = false
       alert("A foglalás a határidő túllépése miatt törölve.")
@@ -128,7 +128,6 @@ const initDatabase = async () => {
 const resetSeats = async () => {
   await resetDatabase();
   clearInterval(timerInterval);
-  releaseReservation(reservedSeats)
   localStorage.setItem("seats", null);
   hasReservation.value = false
   alert("Ülőhelyek visszaállítva.")
@@ -236,9 +235,8 @@ const resetSeats = async () => {
   top: 0;
   left: 0;
   margin: 1rem;
-  font-size: x-large;
+  font-size: large;
   font-weight: bold;
   cursor: pointer;
-
 }
 </style>

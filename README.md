@@ -1,6 +1,6 @@
-# Movie Reservation System
+# Seat Reservation System
 
-This project implements a simple movie reservation system that allows users to book available seats in a movie theater. The system is built using JavaScript with the Nuxt.js 3 framework and utilizes MySQL for database management.
+This project implements a simple seat reservation system that allows users to book available seats in a movie theater. The system is built using JavaScript with the Nuxt.js 3 framework and utilizes MySQL for database management.
 
 ### Table of Contents
 - [Prerequisites](#prerequisites)

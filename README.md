@@ -61,7 +61,7 @@ DB_NAME = bardi_auto_cinema
 npm run dev
 ```
 
-5. Visit **[http://localhost:3000](http://localhost:3000)** in your browser and start using the movie reservation system.
+5. Visit **[http://localhost:3000](http://localhost:3000)** in your browser and start using the seat reservation system.
 
 ## Features
 

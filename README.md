@@ -54,6 +54,9 @@ DB_USER = root
 DB_PASSWORD = password
 DB_NAME = bardi_auto_cinema
 ```
+> Replace `root` and `password` with your own username and password
+
+> Replace `bardi_auto_cinema` with your own database name if it's different
 
 4. Start the development environment with the following command:
 
